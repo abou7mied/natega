@@ -17,7 +17,7 @@ Open **index.html** in the browser
 ![](screenshot.png) 
 
 ## Features
-- Sort by subject or total degree
+- Sort by subject or total degree (click on column to sort)
 
 ## Modify App.js
 If you want to modify app.js you should run
@@ -26,5 +26,5 @@ npm install ## install devDependencies
 npm run build
 ```
 
-##Share results
+## Share results
 All you need is **index.html** and **dist** directory
