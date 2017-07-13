@@ -9,7 +9,7 @@ Use **fetch.js** command and pass seatNumber and count, for example
 ```bash
 ./fetch.js -s 1234 -c 10
 ```
-This will fetch results for seat numbers from 1234 to 1244, results will be saved at **dist/results.js** as global variable with name **results**
+This will fetch results for seat numbers from 1234 to 1243, results will be saved at **dist/results.js** as global variable with name **results**
 
 Open **index.html** in the browser
 
