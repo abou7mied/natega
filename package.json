@@ -1,0 +1,20 @@
+{
+  "name": "Natega",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel --out-dir dist --present env app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.5.0",
+    "commander": "^2.11.0",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.0"
+  }
+}

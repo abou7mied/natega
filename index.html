@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Natega</title>
+  <script type="text/javascript" src="dist/vue.min.js"></script>
+  <script type="text/javascript" src="dist/vue-resource.min.js"></script>
+  <script type="text/javascript" src="dist/results.js"></script>
+  <script type="text/javascript" src="dist/app.js"></script>
+  <link rel="stylesheet" href="dist/css/bootstrap.min.css"/>
+  <meta http-equiv="Content-Type" content="charset=utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      direction: rtl;
+      text-align: right !important;
+    }
+
+    body {
+      font-size: 14px;
+    }
+
+    thead tr {
+      background-color: #476ab9;
+      color: white;
+    }
+
+    thead #Name {
+      min-width: 220px;
+    }
+
+    thead th {
+      vertical-align: middle !important;
+      text-align: center !important;
+      cursor: pointer;
+    }
+
+    thead th:hover {
+      opacity: 0.5;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<div id="app">
+
+  <div class="container-fluid">
+    <br>
+
+    <table class="table table-striped table-hover table-bordered table-condensed">
+      <thead>
+      <tr>
+        <th :id="column" v-for="(val, column) in columns" @click="sort(column)">
+          {{val}}
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="student in sortedStudents">
+        <th :id="student.SeatNumber" :class="column" v-for="(val, column) in columns">
+          <a :href="'#'+student[column]" v-if="column == 'SeatNumber'">
+            {{getText(column, student)}}
+          </a>
+          <template v-else>
+            {{getText(column, student)}}
+          </template>
+
+        </th>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+</body>
+</html>
