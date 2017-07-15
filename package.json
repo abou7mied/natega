@@ -1,13 +1,15 @@
 {
   "name": "Natega",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel --out-dir dist --present env app.js"
   },
-  "author": "",
+  "author": {
+    "name": "Ahmed Sabry"
+  },
   "license": "ISC",
   "dependencies": {
     "async": "^2.5.0",

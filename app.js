@@ -3,66 +3,30 @@ function ready() {
   const app = new Vue({
     el: '#app',
     data: {
+      profile: "general",
+      totalDegree: {
+        key: "TotalDegree",
+        value: 410,
+      },
       fetching: false,
       from: "",
       to: "",
       orderBy: "",
       descOrder: false,
-      columns: {
-        SeatNumber: "رقم الجلوس",
-        Name: "الاسم",
-        School: "المدرسة",
-        DeptName: "الادارة التعليمية",
-        Section: "الشعبة",
-        TotalDegree: "مجموع الدرجات",
-        Percentage: "النسبة المئوية",
-        StudentCase: "حالة الطالب",
-        Arabic1: "اللغة العربية",
-        // Arabic2: "اللغة العربية 2",
-        English1: "اللغة الاجنبية الاولى 1",
-        // English2: "اللغة الاجنبية الاولى 2",
-        Flanguage2: "اللغة الاجنبية الثانية",
-        // Math1J: "الجبر رياضيات 1",
-        // Math1T: "التفاضل - رياضيات 1",
-        Math1: "مجموع الرياضيات البحتة",
-        History: "التاريخ",
-        Geography: "الجغرافيا",
-        Philosophy: "الفلسفة والمنطق",
-        Psychology: "علم النفس والاجتماع",
-        Economie: "الاقتصاد",
-        Statistics: "الاحصاء",
-        EconomieAndStatistics: "الاقتصاد والاحصاء",
-        Chemistry: "الكيمياء",
-        Biology: "الاحياء",
-        Geology: "الجيولوجيا وعلوم البيئة",
-        // Math2J: "الجبر - رياضيات",
-        // Math2T: "التفاضل - رياضيا ت 2",
-        // Math2M: "الميكانيكا - رياضيات 2",
-        Math2: "الرياضيات 2",
-        Physics: "الفيزياء",
-        Religion1: "التربية الدينية",
-        // Religion1: "التربية الدينية 1",
-        // Religion2: "التربية الدينية 2",
-        National: "التربية الوطنية",
-        // ArabicHL: "لغة عربية (مستوى رفيع)",
-        // EnglishHL: "لغة أولى (مستوى رفيع) :",
-        // GeographyHL: "جغرافيا (مستوى رفيع)",
-        // PhilosophyHL: "فلسفة (مستوى رفيع)",
-        // BiologyHL: "احياء (مستوى رفيع)",
-        // MathHL: "رياضيات (مستوى رفيع)",
-        NoOfFails: "عدد مواد الرسوب",
-        // StudentType: "طلاب",
-        // OrderEgypt: "0",
-        // OrderDept: "0",
-        // OrderState: "0",
-        // OrderSchool: "0",
-        // TotalDegreeAfterHL: "مجموع الدرجات بعد المستوى الرفيع",
-      },
-      students: []
+      filterBy: "",
+      filterKey: "",
+      columns: {},
+      students: [],
+      selected: [],
     },
 
     mounted() {
-      this.students = results;
+      this.students = results.students;
+
+      // this.students = results.students;
+      this.columns = results.columns;
+      this.profile = results.profile;
+      this.totalDegree = results.totalDegree;
     },
 
     computed: {
@@ -72,14 +36,31 @@ function ready() {
         return this.fetching || !from || !to || (!(to > from) && to !== from);
       },
       sortedStudents() {
-        if (this.orderBy) {
-          this.students.sort((a, b) => {
-            let f = this.descOrder ? b : a;
-            let s = !this.descOrder ? b : a;
-            return f[this.orderBy] - s[this.orderBy];
+        let results = Object.keys(this.students).map((key) => {
+          return this.students[key];
+        });
+
+        if (this.filterBy && this.filterKey) {
+          results = results.filter((item) => {
+            return item[this.filterBy].indexOf(this.filterKey) !== -1;
           })
         }
-        return this.students;
+
+        if (this.orderBy) {
+          results = results.sort((a, b) => {
+            // 'a'.localeCompare('c');
+            let f = this.descOrder ? b : a;
+            let s = !this.descOrder ? b : a;
+            const fVal = f[this.orderBy];
+            const sVal = s[this.orderBy];
+            // if (typeof fVal === "string") {
+            // return fVal.localeCompare(sVal);
+            return fVal.localeCompare(sVal);
+            // }
+            // return fVal - sVal;
+          });
+        }
+        return results;
       }
     },
 
@@ -89,7 +70,7 @@ function ready() {
 
         switch (column) {
           case "Percentage":
-            text = ((student.TotalDegree / 410) * 100);
+            text = ((student[this.totalDegree.key] / this.totalDegree.value) * 100);
             text = (text + "").substr(0, 5) + "%";
             break;
           case "StudentCase":
@@ -98,10 +79,6 @@ function ready() {
           case "Section":
             text = this.branch(text);
             break;
-          // case "SeatNumber":
-          // case "Name":
-          //   text = "*************";
-          //   break;
           default:
             text = this.subjectsCases(text);
             break;
@@ -128,11 +105,25 @@ function ready() {
 
       sort(column) {
         if (column === "Percentage")
-          column = "TotalDegree";
+          column = this.totalDegree.key;
         this.descOrder = this.orderBy === column ? !this.descOrder : true;
         this.orderBy = column;
+      },
+      clearFilter() {
+        this.filterKey = "";
+      },
+      itemClick(seatNumber) {
+        seatNumber = parseInt(seatNumber);
+        const index = this.selected.indexOf(seatNumber);
+        if (index === -1) {
+          this.selected.push(seatNumber);
+        } else {
+          this.selected.splice(index, 1);
+        }
+      },
+      isSelected(student) {
+        return this.selected.indexOf(student.SeatNumber || student.StSeatNo) !== -1
       }
-
     }
 
   });
