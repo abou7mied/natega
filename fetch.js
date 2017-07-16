@@ -176,6 +176,7 @@ program
 let results = {
   students: {},
   notFetched: [],
+  noResults: [],
 };
 
 function fetchStudent(seatNumber, next, attemptNo) {
@@ -209,6 +210,7 @@ function fetchStudent(seatNumber, next, attemptNo) {
       results.students[seatNumber] = parsed;
       console.log("Fetched: %d, seatNumber: %d, Name: %s", ++fetched, seatNumber, (parsed.Name || parsed.StudenName));
     } else {
+      results.noResults.push(parseInt(seatNumber));
       console.log("No Results for %d", seatNumber);
     }
 
@@ -242,6 +244,8 @@ function fetch() {
                 results.students = parsed.students;
               if (parsed.notFetched)
                 results.notFetched = parsed.notFetched;
+              if (parsed.noResults)
+                results.noResults = parsed.noResults;
             }
           } catch (e) {
             console.log("Error parsing old results");
@@ -263,7 +267,7 @@ function fetch() {
 
     async.timesLimit(count, program.maxSockets || 30, (n, next) => {
       let seatNumber = from + n;
-      if (!results.students[seatNumber]) {
+      if (!results.students[seatNumber] && results.noResults.indexOf(seatNumber) === -1) {
         fetchStudent(seatNumber, next);
       } else {
         process.nextTick(() => {
