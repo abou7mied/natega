@@ -23,11 +23,14 @@ This will fetch results for seat numbers from 1234 to 1243, results will be save
 
   Options:
 
-    -V, --version              output the version number
-    -s, --seatNumber <number>  seat Number
-    -c, --count <count>        count of students to fetch results
-    -p, --profile <profile>    which results to fetch? General (Thanawy 3am, default), Azhar(TotalDegree only) or Azhar2(Subjects degrees)
-    -h, --help                 output usage information
+    -V, --version                   output the version number
+    -s, --seatNumber <number>       seat Number
+    -c, --count <count>             count of students to fetch results
+    -p, --profile <profile>         which results to fetch? General (Thanawy 3am, default), Azhar(TotalDegree only) or Azhar2(Subjects degrees)
+    -r, --clearPrefetched           clear prefetched and save new only
+    -w, --writeFetchedEveryRequest  write fetched data after each request
+    --maxSockets <number>           max parallel sockets used to fetch data
+    -h, --help                      output usage information
 
 ```
 
