@@ -264,8 +264,10 @@ function fetch() {
       if (!results.students[seatNumber]) {
         fetchStudent(seatNumber, next);
       } else {
-        console.log("Skip prefetched seatNumber: %d", seatNumber);
-        next();
+        process.nextTick(() => {
+          console.log("Skip prefetched seatNumber: %d", seatNumber);
+          next();
+        })
       }
     }, () => {
       writeFetched();
