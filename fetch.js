@@ -148,6 +148,7 @@ let profiles = {
 
 let profile = profiles.general;
 let fetched = 0;
+let started = false;
 
 function jsonParser(text) {
   let json;
@@ -257,6 +258,7 @@ function fetch() {
     let from = program.seatNumber;
     let count = program.count;
 
+    started = true;
     console.log("Total Count: %d", count);
 
     async.timesLimit(count, program.maxSockets || 30, (n, next) => {
@@ -301,8 +303,10 @@ if (program.seatNumber && program.count) {
 }
 
 process.on('SIGINT', () => {
-  console.log("SIGTERM, write fetched to file");
-  writeFetched(() => {
-    process.exit();
-  });
+  if (started) {
+    console.log("SIGTERM, write fetched to file");
+    writeFetched(() => {
+      process.exit();
+    });
+  }
 });
