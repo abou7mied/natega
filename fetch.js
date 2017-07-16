@@ -163,12 +163,14 @@ function jsonParser(text) {
 
 
 program
-  .version('0.1.0')
+  .version('0.3.0')
   .option('-s, --seatNumber <number>', 'seat Number', parseInt)
   .option('-c, --count <count>', 'count of students to fetch results', parseInt)
   .option('-p, --profile <profile>', 'which results to fetch? General (Thanawy 3am, default), Azhar(TotalDegree only) or Azhar2(Subjects degrees)')
+  .option('-r, --clearPrefetched', 'clear prefetched and save new only')
+  .option('-w, --writeFetchedEveryRequest', 'write fetched data after each request')
+  .option('--maxSockets <number>', 'max parallel sockets used to fetch data', parseInt)
   .parse(process.argv);
-
 
 let results = {
   students: {},
@@ -209,7 +211,11 @@ function fetchStudent(seatNumber, next, attemptNo) {
       console.log("No Results for %d", seatNumber);
     }
 
-    writeFetched(next);
+    if (program.writeFetchedEveryRequest) {
+      writeFetched(next);
+    } else {
+      next();
+    }
 
   });
 }
@@ -224,15 +230,17 @@ function fetch() {
         } else {
           try {
             let parsed = JSON.parse(data.replace(resultsPrefix, ""));
-            if (parsed.profile === profile.name) {
+            let noSameProfile = parsed.profile === profile.name;
+            let clearPrefetched = program.clearPrefetched;
+            if (noSameProfile || clearPrefetched) {
+              console.log("Backup prefetched");
+              fs.rename(resultsFilePath, `dist/${parsed.profile}-${Date.now()}.js`, next);
+              return;
+            } else {
               if (parsed.students)
                 results.students = parsed.students;
               if (parsed.notFetched)
                 results.notFetched = parsed.notFetched;
-            } else {
-              console.log("Prefetched not same profile, backup it");
-              fs.rename(resultsFilePath, `dist/${parsed.profile}-${Date.now()}.js`, next);
-              return;
             }
           } catch (e) {
             console.log("Error parsing old results");
@@ -251,7 +259,7 @@ function fetch() {
 
     console.log("Total Count: %d", count);
 
-    async.timesLimit(count, 30, (n, next) => {
+    async.timesLimit(count, program.maxSockets || 30, (n, next) => {
       let seatNumber = from + n;
       if (!results.students[seatNumber]) {
         fetchStudent(seatNumber, next);
@@ -290,4 +298,9 @@ if (program.seatNumber && program.count) {
   console.log("Please pass seatNumber and count arguments");
 }
 
-
+process.on('SIGINT', () => {
+  console.log("SIGTERM, write fetched to file");
+  writeFetched(() => {
+    process.exit();
+  });
+});
