@@ -232,7 +232,7 @@ function fetch() {
             let parsed = JSON.parse(data.replace(resultsPrefix, ""));
             let noSameProfile = parsed.profile === profile.name;
             let clearPrefetched = program.clearPrefetched;
-            if (noSameProfile || clearPrefetched) {
+            if (!noSameProfile || clearPrefetched) {
               console.log("Backup prefetched");
               fs.rename(resultsFilePath, `dist/${parsed.profile}-${Date.now()}.js`, next);
               return;
